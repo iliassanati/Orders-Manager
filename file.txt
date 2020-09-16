@@ -1,0 +1,24 @@
+orders management api
+
+orderSchema:{ 
+name,
+description,
+quantity,
+user,
+date,
+}
+///////////////////////////////
+userSchema:{
+  name,
+  email,
+  password,
+  
+}
+
+///////////////////
+user can:
+auth: register,login, update profile, delete his profile, 
+orders: crud for orders
+
+
+////////////////
