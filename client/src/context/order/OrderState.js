@@ -1,8 +1,10 @@
 import React, { useReducer } from 'react';
-import { v4 as uuid } from 'uuid';
 import OrderContext from './orderContext';
 import orderReducer from './orderReducer';
+import axios from 'axios';
 import {
+  GET_ORDERS,
+  CLEAR_ORDERS,
   ADD_ORDER,
   DELETE_ORDER,
   SET_CURRENT,
@@ -10,45 +12,79 @@ import {
   UPDATE_ORDER,
   FILTER_ORDER,
   CLEAR_FILTER,
+  ORDER_ERROR,
 } from '../types';
 
 const OrderState = props => {
   const initialState = {
-    orders: [
-      {
-        id: 1,
-        name: 'pcGamer',
-        description: 'Lenovo yoga i7 super',
-        quantity: '5',
-      },
-      {
-        id: 2,
-        name: 'telephone',
-        description: 'Samsung galaxy s20 blanc',
-        quantity: '3',
-      },
-      {
-        id: 3,
-        name: 'tab',
-        description: 'Ipad 4 32gb 4go ram',
-        quantity: '8',
-      },
-    ],
+    orders: null,
     current: null,
     filtered: null,
+    error: null,
   };
 
   const [state, dispatch] = useReducer(orderReducer, initialState);
 
+  //GET orders
+  const getOrders = async () => {
+    try {
+      const res = await axios.get('/api/orders');
+
+      dispatch({
+        type: GET_ORDERS,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: ORDER_ERROR,
+        payload: err.response.msg,
+      });
+    }
+  };
+
   //Add order
-  const addOrder = order => {
-    order.id = uuid();
-    dispatch({ type: ADD_ORDER, payload: order });
+  const addOrder = async order => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const res = await axios.post('/api/orders', order, config);
+
+      dispatch({
+        type: ADD_ORDER,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: ORDER_ERROR,
+        payload: err.response.msg,
+      });
+    }
   };
 
   //Delete order
-  const deleteOrder = id => {
-    dispatch({ type: DELETE_ORDER, payload: id });
+  const deleteOrder = async id => {
+    try {
+      await axios.delete(`/api/orders/${id}`);
+
+      dispatch({
+        type: DELETE_ORDER,
+        payload: id,
+      });
+    } catch (err) {
+      dispatch({
+        type: ORDER_ERROR,
+        payload: err.response.msg,
+      });
+    }
+  };
+
+  // Clear Orders
+  const clearOrders = () => {
+    dispatch({ type: CLEAR_ORDERS });
   };
 
   //Set Current order
@@ -62,8 +98,26 @@ const OrderState = props => {
   };
 
   //Update order
-  const updateOrder = order => {
-    dispatch({ type: UPDATE_ORDER, payload: order });
+  const updateOrder = async order => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const res = await axios.put(`/api/orders/${order._id}`, order, config);
+
+      dispatch({
+        type: UPDATE_ORDER,
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: ORDER_ERROR,
+        payload: err.response.msg,
+      });
+    }
   };
   //Filter orders
   const filterOrders = text => {
@@ -81,6 +135,8 @@ const OrderState = props => {
         orders: state.orders,
         current: state.current,
         filtered: state.filtered,
+        error: state.error,
+        getOrders,
         addOrder,
         deleteOrder,
         setCurrent,
@@ -88,6 +144,7 @@ const OrderState = props => {
         updateOrder,
         filterOrders,
         clearFilter,
+        clearOrders,
       }}
     >
       {props.children}

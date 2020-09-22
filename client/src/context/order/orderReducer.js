@@ -6,20 +6,39 @@ import {
   UPDATE_ORDER,
   FILTER_ORDER,
   CLEAR_FILTER,
+  ORDER_ERROR,
+  GET_ORDERS,
+  CLEAR_ORDERS,
 } from '../types';
 
 export default (state, action) => {
   switch (action.type) {
+    case GET_ORDERS:
+      return {
+        ...state,
+        orders: action.payload,
+        loading: false,
+      };
     case ADD_ORDER:
       return {
         ...state,
-        orders: [...state.orders, action.payload],
+        orders: [action.payload, ...state.orders],
+        loading: false,
       };
 
     case DELETE_ORDER:
       return {
         ...state,
-        orders: state.orders.filter(order => order.id !== action.payload),
+        orders: state.orders.filter(order => order._id !== action.payload),
+        loading: false,
+      };
+    case CLEAR_ORDERS:
+      return {
+        ...state,
+        orders: null,
+        filtered: null,
+        error: null,
+        current: null,
       };
     case SET_CURRENT:
       return {
@@ -35,8 +54,9 @@ export default (state, action) => {
       return {
         ...state,
         orders: state.orders.map(order =>
-          order.id === action.payload.id ? action.payload : order
+          order._id === action.payload._id ? action.payload : order
         ),
+        loading: false,
       };
 
     case FILTER_ORDER:
@@ -51,6 +71,12 @@ export default (state, action) => {
       return {
         ...state,
         filtered: null,
+      };
+
+    case ORDER_ERROR:
+      return {
+        ...state,
+        error: action.payload,
       };
 
     default:

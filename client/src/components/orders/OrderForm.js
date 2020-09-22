@@ -3,7 +3,7 @@ import OrderContext from '../../context/order/orderContext';
 
 const OrderForm = () => {
   const orderContext = useContext(OrderContext);
-  const { addOrder, updateOrder, clearCurrent, orders, current } = orderContext;
+  const { addOrder, updateOrder, clearCurrent, current } = orderContext;
 
   useEffect(() => {
     if (current !== null) {

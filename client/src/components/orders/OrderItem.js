@@ -6,10 +6,10 @@ const OrderItem = ({ order }) => {
   const orderContext = useContext(OrderContext);
 
   const { deleteOrder, setCurrent, clearCurrent } = orderContext;
-  const { id, name, description, quantity } = order;
+  const { _id, name, description, quantity } = order;
 
   const onDelete = () => {
-    deleteOrder(id);
+    deleteOrder(_id);
     clearCurrent();
   };
 
