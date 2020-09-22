@@ -1,4 +1,4 @@
-# Contact Keeper
+# Orders Manager
 
 > Full stack MERN orders manager with React hooks, context & JWT authentication.
 
